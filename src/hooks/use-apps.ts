@@ -43,10 +43,12 @@ export function useApps(filters: AppFilters, enablePolling = true) {
     },
     getNextPageParam: (lastPage) => lastPage.pagination.nextCursor,
     initialPageParam: undefined as string | undefined,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: enablePolling ? 45 * 1000 : false, // 45 seconds
+    staleTime: 0,
+    refetchInterval: enablePolling ? 10 * 1000 : false,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    networkMode: "always",
   });
 }
 
@@ -90,13 +92,13 @@ export function useAppAction() {
                       action.type === "approve"
                         ? ("approved" as const)
                         : action.type === "reject"
-                          ? ("rejected" as const)
-                          : ("flagged" as const),
+                        ? ("rejected" as const)
+                        : ("flagged" as const),
                     updatedAt: new Date().toISOString(),
                   }
-                : app,
+                : app
             ),
-          }),
+          })
         );
 
         return { ...old, pages: updatedPages };
@@ -105,21 +107,12 @@ export function useAppAction() {
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ["apps"] });
     },
-    onSuccess: (data, variables) => {
-      // Update specific cache entry with server response
-      queryClient.setQueriesData({ queryKey: ["apps"] }, (old: any) => {
-        if (!old?.pages) return old;
-
-        const updatedPages = old.pages.map(
-          (page: PaginatedResponse<AppSubmission>) => ({
-            ...page,
-            data: page.data.map((app) =>
-              app.id === variables.appId ? data : app,
-            ),
-          }),
-        );
-
-        return { ...old, pages: updatedPages };
+    onSuccess: () => {
+      // Force refetch
+      queryClient.invalidateQueries({
+        queryKey: ["apps"],
+        exact: false,
+        refetchType: "active",
       });
     },
   });

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApps } from "@/db/queries";
 import { AppFilters, AppStatus, AppCategory } from "@/types";
-import { env } from "@/lib/env";
 import { withApiLogging } from "@/lib/api-middleware";
 
 const CACHE_HEADERS = {
-  "Cache-Control": `public, max-age=${env.API_CACHE_MAX_AGE}, stale-while-revalidate=${env.API_CACHE_STALE_WHILE_REVALIDATE}`,
+  "Cache-Control": "no-cache, no-store, must-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
 };
 
 async function handleGet(request: NextRequest) {
@@ -49,3 +50,7 @@ async function handleGet(request: NextRequest) {
 }
 
 export const GET = withApiLogging(handleGet);
+
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

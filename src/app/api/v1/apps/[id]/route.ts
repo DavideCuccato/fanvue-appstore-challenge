@@ -47,14 +47,27 @@ async function handlePatch(
 
     const updatedApp = await updateAppStatus(id, newStatus);
 
-    return NextResponse.json({
-      success: true,
-      data: updatedApp,
-      timestamp: new Date().toISOString(),
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: updatedApp,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
+    );
   } catch (error) {
     throw error;
   }
 }
 
 export const PATCH = withApiLogging(handlePatch);
+
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

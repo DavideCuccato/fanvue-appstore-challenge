@@ -90,13 +90,13 @@ Datadog dashboards track API latency, database connection pools, Kafka lag, mode
 CORS setup uses Next.js headers configuration for static rules or middleware for dynamic CORS. For this project, middleware handles API route preflight requests with origin whitelisting:
 
 ```typescript
-const allowedOrigins = ['https://dashboard.fanvue.com']
+const allowedOrigins = ["https://dashboard.fanvue.com"];
 export function middleware(request: NextRequest) {
-  const origin = request.headers.get('origin') ?? ''
-  const isAllowedOrigin = allowedOrigins.includes(origin)
+  const origin = request.headers.get("origin") ?? "";
+  const isAllowedOrigin = allowedOrigins.includes(origin);
   // Handle CORS headers for API routes
 }
-export const config = { matcher: '/api/:path*' }
+export const config = { matcher: "/api/:path*" };
 ```
 
 XSS protection relies on React's built-in sanitization by avoiding `dangerouslySetInnerHTML` for app descriptions and user content. Content Security Policy headers block inline scripts and `unsafe-eval` through Next.js CSP configuration.
@@ -128,4 +128,4 @@ Given more time, I would implement:
 - **Request queue management** - Background job processing for moderation actions and audit logging
 - **Multi language support** - Add i18n
 - **Server Side rendering** - Use Next js SSR
-- **Make it responsive** 
+- **Make it responsive**

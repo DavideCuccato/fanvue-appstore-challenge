@@ -13,11 +13,7 @@ const envSchema = z.object({
     .positive()
     .max(365)
     .default(30),
-  MOCK_UPDATE_DATE_RANGE_DAYS: z.coerce
-    .number()
-    .positive()
-    .max(30)
-    .default(7),
+  MOCK_UPDATE_DATE_RANGE_DAYS: z.coerce.number().positive().max(30).default(7),
 
   // Security Configuration
   CORS_ORIGIN: z.string().default("https://dashboard.fanvue.com"),
