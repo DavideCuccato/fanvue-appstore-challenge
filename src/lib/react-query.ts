@@ -13,10 +13,6 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: 1,
-      onSuccess: () => {
-        // Invalidate queries after successful mutations for immediate updates
-        queryClient.invalidateQueries({ queryKey: ["apps"] });
-      },
     },
   },
 });

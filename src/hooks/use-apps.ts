@@ -105,9 +105,22 @@ export function useAppAction() {
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ["apps"] });
     },
-    onSuccess: () => {
-      // Refetch on success to sync ffrom server
-      queryClient.invalidateQueries({ queryKey: ["apps"] });
+    onSuccess: (data, variables) => {
+      // Update specific cache entry with server response
+      queryClient.setQueriesData({ queryKey: ["apps"] }, (old: any) => {
+        if (!old?.pages) return old;
+
+        const updatedPages = old.pages.map(
+          (page: PaginatedResponse<AppSubmission>) => ({
+            ...page,
+            data: page.data.map((app) =>
+              app.id === variables.appId ? data : app,
+            ),
+          }),
+        );
+
+        return { ...old, pages: updatedPages };
+      });
     },
   });
 }
